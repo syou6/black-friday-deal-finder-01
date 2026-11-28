@@ -1,5 +1,5 @@
 import { deals, comparisons } from './data.js';
-import { listPage, resultsView, dealPage, notFound, dateTime } from './views.js';
+import { listPage, resultsView, dealPage, comparePage, notFound, dateTime } from './views.js';
 
 const app = document.getElementById('app');
 const summaryEl = document.getElementById('summary');
@@ -53,7 +53,7 @@ function updateSummary() {
   const range = times.length
     ? (day(times[0]) === day(times[times.length - 1]) ? day(times[0]) : `${day(times[0])} to ${day(times[times.length - 1])}`)
     : '';
-  summaryEl.textContent = `${deals.length} deals · prices checked ${range} (UTC)`;
+  summaryEl.textContent = `${deals.length} deals · prices re-checked ${range} (UTC)`;
 }
 
 function renderList() {
@@ -70,7 +70,11 @@ function render() {
   window.__shotReady = false;
   const { path, state: s } = parseHash();
   const m = path.match(/^\/deal\/(.+)$/);
-  if (m) {
+  if (path === '/compare') {
+    app.innerHTML = comparePage(comparisons);
+    document.title = 'Compare prices — Deal Beacon';
+    window.scrollTo(0, 0);
+  } else if (m) {
     let id = m[1];
     try { id = decodeURIComponent(id); } catch { /* keep raw id */ }
     const deal = deals.find((d) => d.id === id);
